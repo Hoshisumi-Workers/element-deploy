@@ -10,9 +10,9 @@ on:
 
 env:
   # 替换为你实际绑定在 EdgeOne 上的 Element 域名，用于比对线上版本号
-  YOUR_DOMAIN: "element.o3.hk"
+  YOUR_DOMAIN: "c.o3.hk"
   # 替换为你想要在 EdgeOne Pages 中部署的项目名称
-  PROJECT_NAME: "element-web-staredge" 
+  PROJECT_NAME: "element-web" 
 
 jobs:
   check-and-deploy:
