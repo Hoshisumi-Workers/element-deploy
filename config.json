@@ -21,8 +21,9 @@
     "default_country_code": "CN",
     "show_labs_settings": false,
     "features": {},
-    "default_federate": true,
+    "default_federate": false,
     "default_theme": "light",
+    "permalink_prefix": "https://c.o3.hk",
     "room_directory": {
         "servers": [
             "o3.hk",
@@ -35,7 +36,8 @@
         "https://matrix-client.matrix.org": false
     },
     "setting_defaults": {
-        "breadcrumbs": true
+        "breadcrumbs": true,
+        "language": "zh-hans"
     },
     "jitsi": {
         "preferred_domain": "meet.element.io"
