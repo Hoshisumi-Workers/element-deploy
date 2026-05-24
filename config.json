@@ -1,0 +1,47 @@
+{
+    "default_server_config": {
+        "m.homeserver": {
+            "base_url": "https://matrix.o3.hk",
+            "server_name": "o3.hk"
+        },
+        "m.identity_server": {
+            "base_url": ""
+        }
+    },
+    "disable_custom_urls": true,
+    "disable_guests": false,
+    "disable_login_language_selector": false,
+    "disable_3pid_login": false,
+    "force_verification": false,
+    "brand": "StarEdge MxChat",
+    "integrations_ui_url": "",
+    "integrations_rest_url": "",
+    "integrations_widgets_urls": [],
+    "default_widget_container_height": 280,
+    "default_country_code": "CN",
+    "show_labs_settings": false,
+    "features": {},
+    "default_federate": true,
+    "default_theme": "light",
+    "room_directory": {
+        "servers": [
+            "o3.hk",
+            "matrix.org"
+        ]
+    },
+    "enable_presence_by_hs_url": {
+        "https://matrix.o3.hk": false,
+        "https://matrix.org": false,
+        "https://matrix-client.matrix.org": false
+    },
+    "setting_defaults": {
+        "breadcrumbs": true
+    },
+    "jitsi": {
+        "preferred_domain": "meet.element.io"
+    },
+    "element_call": {
+        "url": "https://call.element.io",
+        "brand": "Element Call"
+    }
+}
