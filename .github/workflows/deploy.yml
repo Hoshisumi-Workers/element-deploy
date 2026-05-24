@@ -4,15 +4,12 @@ on:
   push:
     branches: [ main, master ]
   schedule:
-    # 每天北京时间早上 8:00 (UTC 0:00) 自动执行检测
     - cron: '0 0 * * *'
-  workflow_dispatch: # 允许在面板上手动触发部署
+  workflow_dispatch:
 
 env:
-  # 替换为你实际绑定在 EdgeOne 上的 Element 域名，用于比对线上版本号
-  YOUR_DOMAIN: "c.o3.hk"
-  # 替换为你想要在 EdgeOne Pages 中部署的项目名称
-  PROJECT_NAME: "element-web" 
+  YOUR_DOMAIN: "element.o3.hk"
+  PROJECT_NAME: "element-web-staredge" 
 
 jobs:
   check-and-deploy:
@@ -21,21 +18,24 @@ jobs:
       - name: Checkout repository
         uses: actions/checkout@v4
 
-      - name: Check for new version
+      - name: Determine if deployment is needed
         id: version_check
         run: |
           LATEST_TAG=$(curl -s https://api.github.com/repos/element-hq/element-web/releases/latest | jq -r '.tag_name')
           echo "Official latest version is: $LATEST_TAG"
           
-          # 尝试读取线上版本号
           CURRENT_TAG=$(curl -sL "https://${{ env.YOUR_DOMAIN }}/version.txt" || echo "none")
           echo "Currently deployed version is: $CURRENT_TAG"
           
-          if [ "$LATEST_TAG" == "$CURRENT_TAG" ]; then
-            echo "Version is up to date. Skipping deployment."
+          if [ "${{ github.event_name }}" == "push" ] || [ "${{ github.event_name }}" == "workflow_dispatch" ]; then
+            echo "Triggered by push or manual trigger. Force deploying to apply local changes."
+            echo "skip=false" >> $GITHUB_ENV
+            echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
+          elif [ "$LATEST_TAG" == "$CURRENT_TAG" ]; then
+            echo "Triggered by schedule. Version is up to date. Skipping deployment."
             echo "skip=true" >> $GITHUB_ENV
           else
-            echo "New version detected! Proceeding with download and deploy."
+            echo "Triggered by schedule. New version detected! Proceeding with deploy."
             echo "skip=false" >> $GITHUB_ENV
             echo "LATEST_TAG=$LATEST_TAG" >> $GITHUB_ENV
           fi
@@ -43,7 +43,6 @@ jobs:
       - name: Download and extract official release
         if: env.skip == 'false'
         run: |
-          # 获取官方编译好的静态资源包的真实下载地址
           ASSET_URL=$(curl -s https://api.github.com/repos/element-hq/element-web/releases/tags/${{ env.LATEST_TAG }} | jq -r '.assets[] | select(.name | endswith(".tar.gz")) | .browser_download_url')
           echo "Downloading from: $ASSET_URL"
           
@@ -59,14 +58,12 @@ jobs:
           cp config.json dist/config.json
           echo "Custom config.json injected successfully."
 
-      # 【修正点 1】：注入 Node.js 环境以支持 EdgeOne 的 CLI 工具
       - name: Setup Node.js
         if: env.skip == 'false'
         uses: actions/setup-node@v4
         with:
-          node-version: '22' # 官方推荐的 Node 版本
+          node-version: '22'
 
-      # 【修正点 2】：严格按照官方文档使用 npx 执行部署
       - name: Deploy to EdgeOne Pages via CLI
         if: env.skip == 'false'
         run: |
