@@ -8,8 +8,8 @@ on:
   workflow_dispatch:
 
 env:
-  YOUR_DOMAIN: "element.o3.hk"
-  PROJECT_NAME: "element-web-staredge" 
+  YOUR_DOMAIN: "c.o3.hk"
+  PROJECT_NAME: "element-web" 
 
 jobs:
   check-and-deploy:
