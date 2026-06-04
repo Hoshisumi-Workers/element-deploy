@@ -21,7 +21,7 @@ jobs:
       - name: Determine if deployment is needed
         id: version_check
         run: |
-          LATEST_TAG=$(curl -s https://api.github.com/repos/element-hq/element-web/releases/latest | jq -r '.tag_name')
+          LATEST_TAG=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/element-hq/element-web/releases/latest | jq -r '.tag_name')
           echo "Official latest version is: $LATEST_TAG"
           
           CURRENT_TAG=$(curl -sL "https://${{ env.YOUR_DOMAIN }}/version.txt" || echo "none")
@@ -43,7 +43,7 @@ jobs:
       - name: Download and extract official release
         if: env.skip == 'false'
         run: |
-          ASSET_URL=$(curl -s https://api.github.com/repos/element-hq/element-web/releases/tags/${{ env.LATEST_TAG }} | jq -r '.assets[] | select(.name | endswith(".tar.gz")) | .browser_download_url')
+          ASSET_URL=$(curl -s -H "Authorization: Bearer ${{ secrets.GITHUB_TOKEN }}" https://api.github.com/repos/element-hq/element-web/releases/tags/${{ env.LATEST_TAG }} | jq -r '.assets[] | select(.name | endswith(".tar.gz")) | .browser_download_url')
           echo "Downloading from: $ASSET_URL"
           
           curl -L -o element.tar.gz "$ASSET_URL"
